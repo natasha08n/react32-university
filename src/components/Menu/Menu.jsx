@@ -4,7 +4,7 @@ import { menuConfig } from "../../utils/menu";
 
 function Menu() {
   return (
-    <div>
+    <div className={styles.menu}>
       {menuConfig.map((menuItem) => (
         <div key={menuItem.id} className={styles.menuItem}>
           {menuItem.icon}

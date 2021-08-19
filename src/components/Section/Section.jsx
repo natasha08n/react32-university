@@ -1,58 +1,85 @@
 import React from "react";
+import shortid from "shortid";
 
+import { Title } from "../Title/Title";
+import { Card } from "../Card/Card";
+import { Form } from "../Form/Form";
 import { Button } from "../Button/Button";
 
 class Section extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      counter: 0,
       showed: false,
-      showed2: false,
+      cities: [],
     };
   }
 
+  handleSubmit = (city) => {
+    console.log("data", this.state.cities);
+    this.setState((prevState) => ({
+      cities: [
+        ...prevState.cities,
+        {
+          id: shortid.generate(),
+          name: city,
+        },
+      ],
+    }));
+  };
+
+  handleRemove = (id) => {
+    this.setState({
+      cities: this.state.cities.filter((city) => city.id !== id),
+    });
+  };
+
   render() {
+    const { cities, showed } = this.state;
+
     return (
       <div>
-        <p>{this.state.counter}</p>
+        {cities.length ? <Title title="Города" /> : null}
+        {cities.map((city) => {
+          return (
+            <Card
+              key={city.id}
+              id={city.id}
+              name={city.name}
+              buttonName="Удалить"
+              handleClick={this.handleRemove}
+            />
+          );
+        })}
+        {showed && <Form onSubmit={this.handleSubmit} />}
         <Button
           onClick={() => {
-            for (let i = 0; i < 10; i++) {
-              console.log("usual clicked", this.state.counter);
-
-              this.setState((prevState) => {
-                console.log("prev state clicked", prevState.counter);
-
-                return { counter: prevState.counter + 1 };
-              });
-            }
+            this.setState({ showed: !showed });
           }}
-          buttonName="Увеличить"
-        />
-
-        <p>
-          {this.state.showed ? "Форма для добавления города 1" : "Нет формы"}
-        </p>
-        <Button
-          onClick={() => {
-            console.log("clicked 1");
-            this.setState({ showed: !this.state.showed });
-          }}
-          buttonName="Добавить город 1"
-        />
-
-        {this.state.showed2 && <p>Форма для добавления города 2</p>}
-        <Button
-          onClick={() => {
-            console.log("clicked 2");
-            this.setState({ showed2: true });
-          }}
-          buttonName="Добавить город 2"
+          buttonName="Добавить город"
         />
       </div>
     );
   }
+}
+
+{
+  /* ---COUNTER----
+  <p>{this.state.counter}</p>
+<Button
+  onClick={() => {
+    for (let i = 0; i < 10; i++) {
+      console.log("usual clicked", this.state.counter);
+
+      this.setState((prevState) => {
+        console.log("prev state clicked", prevState.counter);
+
+        return { counter: prevState.counter + 1 };
+      });
+    }
+  }}
+  buttonName="Увеличить"
+/> */
 }
 
 // function Section() {
