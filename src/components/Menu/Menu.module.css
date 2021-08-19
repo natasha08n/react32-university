@@ -1,0 +1,9 @@
+.menuItem {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+.menuName {
+  margin-left: 10px;
+}
