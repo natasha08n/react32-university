@@ -8,6 +8,7 @@ import { Button } from "../Button/Button";
 
 class Section extends React.Component {
   constructor(props) {
+    
     super(props);
     this.state = {
       showed: false,
@@ -15,8 +16,25 @@ class Section extends React.Component {
     };
   }
 
+  componentDidMount() {
+    console.log('componentDidMount')
+    const localCities = localStorage.getItem('cities');
+    const parsedCities = JSON.parse(localCities);
+    if (parsedCities && Array.isArray(parsedCities)) {
+      this.setState({ cities: parsedCities });
+    }
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem('cities', JSON.stringify(this.state.cities));
+  }
+
+  // componentWillUnmount() {
+  //   console.log('componentWillUnmount')
+  //   this.handleClearAll();
+  // }
+
   handleSubmit = (city) => {
-    console.log("data", this.state.cities);
     this.setState((prevState) => ({
       cities: [
         ...prevState.cities,
@@ -33,6 +51,11 @@ class Section extends React.Component {
       cities: this.state.cities.filter((city) => city.id !== id),
     });
   };
+
+  handleClearAll = () => {
+    console.log('handleClearAll')
+    localStorage.removeItem('cities');
+  }
 
   render() {
     const { cities, showed } = this.state;
@@ -51,6 +74,11 @@ class Section extends React.Component {
             />
           );
         })}
+        <br />
+        {cities.length > 5 && <Button
+          onClick={this.handleClearAll}
+          buttonName="Удалить все города"
+        />}
         {showed && <Form onSubmit={this.handleSubmit} />}
         <Button
           onClick={() => {
