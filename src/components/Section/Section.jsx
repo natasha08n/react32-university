@@ -1,32 +1,54 @@
 import React from "react";
 import shortid from "shortid";
+import axios from "axios";
 
 import { Title } from "../Title/Title";
 import { Card } from "../Card/Card";
 import { Form } from "../Form/Form";
 import { Button } from "../Button/Button";
 
+const BASE_URL = "http://localhost:3000";
+
+// вынести запрос в файл API
+// попрбовать обновить город
+// реализовать добавление нового города в db.json
+// реализовать удаление таблицы
+
 class Section extends React.Component {
   constructor(props) {
-    
     super(props);
     this.state = {
       showed: false,
       cities: [],
+      loading: false,
+      error: "",
     };
   }
 
   componentDidMount() {
-    console.log('componentDidMount')
-    const localCities = localStorage.getItem('cities');
-    const parsedCities = JSON.parse(localCities);
-    if (parsedCities && Array.isArray(parsedCities)) {
-      this.setState({ cities: parsedCities });
-    }
+    this.setState({ loading: true });
+
+    axios
+      .get(`${BASE_URL}/cities`)
+      .then((response) => {
+        if (response.status === 200) {
+          this.setState({ cities: response.data });
+        }
+
+        if (response.status === 404) {
+          throw new Error(response.message || "cities - не существует")
+        }
+      })
+      .catch((error) => {
+        this.setState({ error: error.message });
+      })
+      .then(() => {
+        this.setState({ loading: false });
+      });
   }
 
   componentDidUpdate() {
-    localStorage.setItem('cities', JSON.stringify(this.state.cities));
+    localStorage.setItem("cities", JSON.stringify(this.state.cities));
   }
 
   // componentWillUnmount() {
@@ -50,19 +72,29 @@ class Section extends React.Component {
     this.setState({
       cities: this.state.cities.filter((city) => city.id !== id),
     });
+
+    axios.delete(`${BASE_URL}/cities/${id}`).then((response) => {
+      if (response.status === 200) {
+        console.log(`City with id ${id} has been successfully deleted`);
+      }
+    }).catch((error) => {
+
+    })
   };
 
   handleClearAll = () => {
-    console.log('handleClearAll')
-    localStorage.removeItem('cities');
-  }
+    console.log("handleClearAll");
+    localStorage.removeItem("cities");
+  };
 
   render() {
-    const { cities, showed } = this.state;
+    const { cities, showed, loading, error } = this.state;
 
     return (
       <div>
         {cities.length ? <Title title="Города" /> : null}
+        {loading && <p>Города загружаются</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         {cities.map((city) => {
           return (
             <Card
@@ -75,10 +107,12 @@ class Section extends React.Component {
           );
         })}
         <br />
-        {cities.length > 5 && <Button
-          onClick={this.handleClearAll}
-          buttonName="Удалить все города"
-        />}
+        {cities.length > 5 && (
+          <Button
+            onClick={this.handleClearAll}
+            buttonName="Удалить все города"
+          />
+        )}
         {showed && <Form onSubmit={this.handleSubmit} />}
         <Button
           onClick={() => {
