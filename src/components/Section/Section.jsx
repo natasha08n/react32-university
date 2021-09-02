@@ -72,7 +72,7 @@ function Section() {
           console.log(`City with id ${id} has been successfully deleted`);
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
   };
 
   const handleClearAll = () => {
