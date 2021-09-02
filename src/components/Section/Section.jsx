@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import shortid from "shortid";
 import axios from "axios";
 
@@ -14,115 +14,100 @@ const BASE_URL = "http://localhost:3000";
 // реализовать добавление нового города в db.json
 // реализовать удаление таблицы
 
-class Section extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showed: false,
-      cities: [],
-      loading: false,
-      error: "",
-    };
-  }
+function Section() {
+  const [showed, setShowed] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  componentDidMount() {
-    this.setState({ loading: true });
+  useEffect(() => {
+    setLoading(true);
 
     axios
       .get(`${BASE_URL}/cities`)
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ cities: response.data });
+          if (response.data.length !== 0) {
+            setCities(response.data);
+          }
         }
 
         if (response.status === 404) {
-          throw new Error(response.message || "cities - не существует")
+          throw new Error(response.message || "cities - не существует");
         }
       })
       .catch((error) => {
-        this.setState({ error: error.message });
+        setError(error.message);
       })
       .then(() => {
-        this.setState({ loading: false });
+        setLoading(false);
       });
-  }
+  }, []);
 
-  componentDidUpdate() {
-    localStorage.setItem("cities", JSON.stringify(this.state.cities));
-  }
+  const handleSubmit = (city) => {
+    const newCity = {
+      id: shortid.generate(),
+      name: city,
+    };
 
-  // componentWillUnmount() {
-  //   console.log('componentWillUnmount')
-  //   this.handleClearAll();
-  // }
-
-  handleSubmit = (city) => {
-    this.setState((prevState) => ({
-      cities: [
-        ...prevState.cities,
-        {
-          id: shortid.generate(),
-          name: city,
-        },
-      ],
-    }));
+    if (cities.some((c) => c.name === newCity.name)) {
+      alert("Такой город уже существует! Введи новый!");
+    } else {
+      axios.post(`${BASE_URL}/cities`, newCity).then((response) => {
+        console.log("response", response);
+        if (response.status === 201) {
+          setCities((prevCities) => [...prevCities, response.data]);
+        }
+      });
+    }
   };
 
-  handleRemove = (id) => {
-    this.setState({
-      cities: this.state.cities.filter((city) => city.id !== id),
-    });
+  const handleRemove = (id) => {
+    setCities(cities.filter((city) => city.id !== id));
 
-    axios.delete(`${BASE_URL}/cities/${id}`).then((response) => {
-      if (response.status === 200) {
-        console.log(`City with id ${id} has been successfully deleted`);
-      }
-    }).catch((error) => {
-
-    })
+    axios
+      .delete(`${BASE_URL}/cities/${id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log(`City with id ${id} has been successfully deleted`);
+        }
+      })
+      .catch((error) => {});
   };
 
-  handleClearAll = () => {
-    console.log("handleClearAll");
+  const handleClearAll = () => {
     localStorage.removeItem("cities");
   };
 
-  render() {
-    const { cities, showed, loading, error } = this.state;
-
-    return (
-      <div>
-        {cities.length ? <Title title="Города" /> : null}
-        {loading && <p>Города загружаются</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {cities.map((city) => {
-          return (
-            <Card
-              key={city.id}
-              id={city.id}
-              name={city.name}
-              buttonName="Удалить"
-              handleClick={this.handleRemove}
-            />
-          );
-        })}
-        <br />
-        {cities.length > 5 && (
-          <Button
-            onClick={this.handleClearAll}
-            buttonName="Удалить все города"
+  return (
+    <div>
+      {cities.length ? <Title title="Города" /> : null}
+      {loading && <p>Города загружаются</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {cities.map((city) => {
+        return (
+          <Card
+            key={city.id}
+            id={city.id}
+            name={city.name}
+            buttonName="Удалить"
+            handleClick={handleRemove}
           />
-        )}
-        {showed && <Form onSubmit={this.handleSubmit} />}
-        <Button
-          onClick={() => {
-            this.setState({ showed: !showed });
-          }}
-          buttonName="Добавить город"
-        />
-      </div>
-    );
-  }
+        );
+      })}
+      <br />
+      {cities.length > 5 && (
+        <Button onClick={handleClearAll} buttonName="Удалить все города" />
+      )}
+      {showed && <Form onSubmit={handleSubmit} />}
+      <Button
+        onClick={() => {
+          setShowed(!showed);
+        }}
+        buttonName="Добавить город"
+      />
+    </div>
+  );
 }
 
 {
@@ -143,32 +128,5 @@ class Section extends React.Component {
   buttonName="Увеличить"
 /> */
 }
-
-// function Section() {
-//   const [showed, setShowed] = useState(false);
-//   const [showed2, setShowed2] = useState(false);
-
-//   return (
-//     <div>
-//       {showed && <p>Форма для добавления города</p>}
-//       <Button
-//         onClick={() => {
-//           console.log("clicked");
-//           setShowed(true);
-//         }}
-//         buttonName="Добавить город"
-//       />
-
-//       {showed2 && <p>Форма для добавления города 2</p>}
-//       <Button
-//         onClick={() => {
-//           console.log("clicked");
-//           setShowed2(true);
-//         }}
-//         buttonName="Добавить город"
-//       />
-//     </div>
-//   );
-// }
 
 export { Section };

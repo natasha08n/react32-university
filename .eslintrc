@@ -1,0 +1,23 @@
+{
+    "plugins": ["react"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:prettier/recommended",
+        "plugin:react-hooks/recommended"
+    ],
+    "rules": {
+        "react/prop-types": 0,
+        "semi": 2,
+        "react/react-in-jsx-scope": 0
+        // allow jsx syntax in js files (for next.js project)
+        // "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    }
+}

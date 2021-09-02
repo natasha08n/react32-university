@@ -1,3 +1,28 @@
 {
-  "cities": []
+  "cities": [
+    {
+      "id": "QvPGikic2",
+      "name": "Минск"
+    },
+    {
+      "id": "TcXBJ-lh3",
+      "name": "Киев"
+    },
+    {
+      "id": "f744JdrwT",
+      "name": "Москва"
+    },
+    {
+      "id": "TWHEzL-B8",
+      "name": "Санкт-Петербург"
+    },
+    {
+      "id": "ZCjIQSoZV",
+      "name": "Дублин"
+    },
+    {
+      "id": "bJlme1k_O",
+      "name": "Казань"
+    }
+  ]
 }
