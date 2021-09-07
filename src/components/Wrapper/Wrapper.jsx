@@ -1,12 +1,11 @@
 import { Sidebar } from "../Sidebar/Sidebar";
-import { Main } from "../Main/Main";
 import styles from "./Wrapper.module.css";
 
-function Wrapper() {
+function Wrapper(props) {
   return (
     <div className={styles.wrapper}>
       <Sidebar />
-      <Main />
+      {props.children}
     </div>
   );
 }

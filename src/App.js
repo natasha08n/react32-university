@@ -1,10 +1,18 @@
-import { Wrapper } from "./components/Wrapper/Wrapper";
+import { Route, Switch } from "react-router-dom";
+
+import { Home } from "./components/pages/Home/Home";
+import { Faculties } from "./components/pages/Faculties/Faculties";
+import { NotFound } from "./components/pages/NotFound/NotFound";
 
 function App() {
   return (
-    <div className="App">
-      <Wrapper />
-    </div>
+    <>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/faculties" component={Faculties} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
