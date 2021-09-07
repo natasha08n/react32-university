@@ -9,10 +9,6 @@
       "name": "Киев"
     },
     {
-      "id": "f744JdrwT",
-      "name": "Москва"
-    },
-    {
       "id": "TWHEzL-B8",
       "name": "Санкт-Петербург"
     },
@@ -23,6 +19,20 @@
     {
       "id": "bJlme1k_O",
       "name": "Казань"
+    },
+    {
+      "id": "AGjCaAoNG",
+      "name": "Лондон"
+    }
+  ],
+  "faculties": [
+    {
+      "id": "H5bJdPchP",
+      "name": "IT"
+    },
+    {
+      "id": "GUFAOF10P",
+      "name": "Design"
     }
   ]
 }

@@ -24,14 +24,16 @@ class Form extends React.Component {
 
   render() {
     const { value } = this.state;
+    const { title, placeholder } = this.props;
 
     return (
       <form style={{ marginBottom: "32px" }} onSubmit={this.onSubmit}>
-        <p>Добавление города</p>
+        <p>{title}</p>
         <input
           type="text"
           value={value}
           className={styles.input}
+          placeholder={placeholder}
           onChange={(e) => {
             this.setState({ value: e.currentTarget.value });
           }}

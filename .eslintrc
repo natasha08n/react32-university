@@ -13,6 +13,10 @@
         // allow jsx syntax in js files (for next.js project)
         // "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }
     },
+    "env": {
+        "browser": true,
+        "node": true
+    },
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module",

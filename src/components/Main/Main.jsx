@@ -1,24 +1,32 @@
-import React, { useState } from "react";
-import { Button } from "../../components/Button/Button";
+import React from "react";
+
+import { StateEmployeeSection } from "../../test-examples/StateEmployeeSection";
+import { ReducerEmployeeSection } from "../../test-examples/ReducerEmployeeSection";
 import { Section } from "../Section/Section";
 import { Title } from "../Title/Title";
 
 import styles from "./Main.module.css";
 
 function Main() {
-  const [showSection, setShowSection] = useState(true);
-
   return (
     <div className={styles.container}>
       <Title title="Информация об университете" />
-      {showSection && <Section />}
-      <br />
-      <Button
-        onClick={() => {
-          setShowSection(!showSection);
-        }}
-        buttonName="Тогл секции"
+      <Section
+        title="Города"
+        placeholder="Город"
+        formTitle="Добавление города"
+        url="cities"
       />
+      <Section
+        title="Факультеты"
+        placeholder="Факультет"
+        formTitle="Добавление факультета"
+        url="faculties"
+      />
+      <br />
+      <p>--------------------------------------------------------</p>
+      <StateEmployeeSection />
+      <ReducerEmployeeSection />
     </div>
   );
 }

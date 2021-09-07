@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import shortid from "shortid";
 import axios from "axios";
 
+import { useToggle } from "../../hooks/use-toggle";
 import { Title } from "../Title/Title";
 import { Card } from "../Card/Card";
 import { Form } from "../Form/Form";
@@ -14,9 +15,9 @@ const BASE_URL = "http://localhost:3000";
 // реализовать добавление нового города в db.json
 // реализовать удаление таблицы
 
-function Section() {
-  const [showed, setShowed] = useState(false);
-  const [cities, setCities] = useState([]);
+function Section({ title, formTitle, placeholder, url }) {
+  const [showed, toggleShowed] = useToggle(false);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,16 +25,16 @@ function Section() {
     setLoading(true);
 
     axios
-      .get(`${BASE_URL}/cities`)
+      .get(`${BASE_URL}/${url}`)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.length !== 0) {
-            setCities(response.data);
+            setItems(response.data);
           }
         }
 
         if (response.status === 404) {
-          throw new Error(response.message || "cities - не существует");
+          throw new Error(response.message || "items - не существует");
         }
       })
       .catch((error) => {
@@ -50,23 +51,23 @@ function Section() {
       name: city,
     };
 
-    if (cities.some((c) => c.name === newCity.name)) {
-      alert("Такой город уже существует! Введи новый!");
+    if (items.some((c) => c.name === newCity.name)) {
+      alert("Такой элемент уже существует! Введи новый!");
     } else {
-      axios.post(`${BASE_URL}/cities`, newCity).then((response) => {
+      axios.post(`${BASE_URL}/${url}`, newCity).then((response) => {
         console.log("response", response);
         if (response.status === 201) {
-          setCities((prevCities) => [...prevCities, response.data]);
+          setItems((prevItems) => [...prevItems, response.data]);
         }
       });
     }
   };
 
   const handleRemove = (id) => {
-    setCities(cities.filter((city) => city.id !== id));
+    setItems(items.filter((city) => city.id !== id));
 
     axios
-      .delete(`${BASE_URL}/cities/${id}`)
+      .delete(`${BASE_URL}/${url}/${id}`)
       .then((response) => {
         if (response.status === 200) {
           console.log(`City with id ${id} has been successfully deleted`);
@@ -75,16 +76,12 @@ function Section() {
       .catch(() => {});
   };
 
-  const handleClearAll = () => {
-    localStorage.removeItem("cities");
-  };
-
   return (
-    <div>
-      {cities.length ? <Title title="Города" /> : null}
-      {loading && <p>Города загружаются</p>}
+    <div style={{ marginTop: "40px", marginBottom: "40px" }}>
+      <Title title={title} />
+      {loading && <p>Идет загрузка</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {cities.map((city) => {
+      {items.map((city) => {
         return (
           <Card
             key={city.id}
@@ -96,15 +93,16 @@ function Section() {
         );
       })}
       <br />
-      {cities.length > 5 && (
-        <Button onClick={handleClearAll} buttonName="Удалить все города" />
+      {showed && (
+        <Form
+          onSubmit={handleSubmit}
+          title={formTitle}
+          placeholder={placeholder}
+        />
       )}
-      {showed && <Form onSubmit={handleSubmit} />}
       <Button
-        onClick={() => {
-          setShowed(!showed);
-        }}
-        buttonName="Добавить город"
+        onClick={toggleShowed}
+        buttonName={showed ? "Скрыть форму" : "Открыть форму"}
       />
     </div>
   );
