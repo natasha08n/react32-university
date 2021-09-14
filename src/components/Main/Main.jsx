@@ -1,7 +1,7 @@
 import React from "react";
 
-import { StateEmployeeSection } from "../../test-examples/StateEmployeeSection";
-import { ReducerEmployeeSection } from "../../test-examples/ReducerEmployeeSection";
+// import { StateEmployeeSection } from "../../test-examples/StateEmployeeSection";
+// import { ReducerEmployeeSection } from "../../test-examples/ReducerEmployeeSection";
 import { Section } from "../Section/Section";
 import { Title } from "../Title/Title";
 
@@ -16,17 +16,19 @@ function Main() {
         placeholder="Город"
         formTitle="Добавление города"
         url="cities"
+        path="/cities"
       />
       <Section
         title="Факультеты"
         placeholder="Факультет"
         formTitle="Добавление факультета"
         url="faculties"
+        path="/faculties"
       />
       <br />
       <p>--------------------------------------------------------</p>
-      <StateEmployeeSection />
-      <ReducerEmployeeSection />
+      {/* <StateEmployeeSection /> */}
+      {/* <ReducerEmployeeSection /> */}
     </div>
   );
 }

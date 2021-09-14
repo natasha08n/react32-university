@@ -1,17 +1,23 @@
+import { Link } from "react-router-dom";
+
 import styles from "./Menu.module.css";
 
 import { menuConfig } from "../../utils/menu";
 
 function Menu() {
   return (
-    <div className={styles.menu}>
-      {menuConfig.map((menuItem) => (
-        <div key={menuItem.id} className={styles.menuItem}>
-          {menuItem.icon}
-          <span className={styles.menuName}>{menuItem.name}</span>
-        </div>
-      ))}
-    </div>
+    <nav className={styles.menu}>
+      <ul>
+        {menuConfig.map((menuItem) => (
+          <li key={menuItem.id} className={styles.menuItem}>
+            {menuItem.icon}
+            <Link to={menuItem.path} className={styles.menuName}>
+              {menuItem.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 

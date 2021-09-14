@@ -1,48 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import shortid from "shortid";
 import axios from "axios";
 
 import { useToggle } from "../../hooks/use-toggle";
+import { BASE_URL } from "../../constants/api";
+
 import { Title } from "../Title/Title";
 import { Card } from "../Card/Card";
 import { Form } from "../Form/Form";
 import { Button } from "../Button/Button";
-
-const BASE_URL = "http://localhost:3000";
 
 // вынести запрос в файл API
 // попрбовать обновить город
 // реализовать добавление нового города в db.json
 // реализовать удаление таблицы
 
-function Section({ title, formTitle, placeholder, url }) {
+function Section(props) {
+  const { title, url, path, formTitle, placeholder } = props;
+
   const [showed, toggleShowed] = useToggle(false);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const isUsed = useRef(false);
+
   useEffect(() => {
-    setLoading(true);
+    if (!isUsed.current) {
+      isUsed.current = true;
 
-    axios
-      .get(`${BASE_URL}/${url}`)
-      .then((response) => {
-        if (response.status === 200) {
-          if (response.data.length !== 0) {
-            setItems(response.data);
+      setLoading(true);
+
+      axios
+        .get(`${BASE_URL}/${url}`)
+        .then((response) => {
+          if (response.status === 200) {
+            if (response.data.length !== 0) {
+              setItems(response.data);
+            }
           }
-        }
 
-        if (response.status === 404) {
-          throw new Error(response.message || "items - не существует");
-        }
-      })
-      .catch((error) => {
-        setError(error.message);
-      })
-      .then(() => {
-        setLoading(false);
-      });
+          if (response.status === 404) {
+            throw new Error(response.message || "items - не существует");
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+        })
+        .then(() => {
+          setLoading(false);
+          isUsed.current = true;
+        });
+    }
   }, []);
 
   const handleSubmit = (city) => {
@@ -55,7 +64,6 @@ function Section({ title, formTitle, placeholder, url }) {
       alert("Такой элемент уже существует! Введи новый!");
     } else {
       axios.post(`${BASE_URL}/${url}`, newCity).then((response) => {
-        console.log("response", response);
         if (response.status === 201) {
           setItems((prevItems) => [...prevItems, response.data]);
         }
@@ -78,7 +86,7 @@ function Section({ title, formTitle, placeholder, url }) {
 
   return (
     <div style={{ marginTop: "40px", marginBottom: "40px" }}>
-      <Title title={title} />
+      <Title title={title} path={path} />
       {loading && <p>Идет загрузка</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {items.map((city) => {
@@ -89,6 +97,7 @@ function Section({ title, formTitle, placeholder, url }) {
             name={city.name}
             buttonName="Удалить"
             handleClick={handleRemove}
+            url={url}
           />
         );
       })}

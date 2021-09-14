@@ -1,14 +1,10 @@
-import { Wrapper } from "../../Wrapper/Wrapper";
+import { Main } from "../../Main/Main";
 
-function Home(props) {
-  console.log("home props", props);
-
+function Home() {
   return (
-    <Wrapper>
-      <div>
-        <h1>Привет, ты на странице университета</h1>
-      </div>
-    </Wrapper>
+    <div>
+      <Main />
+    </div>
   );
 }
 

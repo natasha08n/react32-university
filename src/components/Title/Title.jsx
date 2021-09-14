@@ -1,10 +1,14 @@
+import { Link } from "react-router-dom";
+
 import { Container, Title as TitleTag } from "./Title.styled";
 
-function Title({ title }) {
+function Title({ title, path = "/" }) {
   return (
-    <Container>
-      <TitleTag>{title}</TitleTag>
-    </Container>
+    <Link to={path}>
+      <Container>
+        <TitleTag>{title}</TitleTag>
+      </Container>
+    </Link>
   );
 }
 
