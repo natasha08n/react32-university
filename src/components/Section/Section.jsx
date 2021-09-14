@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import shortid from "shortid";
 import axios from "axios";
 
+import { addCity } from "../../redux/actions";
 import { useToggle } from "../../hooks/use-toggle";
 import { BASE_URL } from "../../constants/api";
 
@@ -19,40 +21,11 @@ function Section(props) {
   const { title, url, path, formTitle, placeholder } = props;
 
   const [showed, toggleShowed] = useToggle(false);
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const isUsed = useRef(false);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!isUsed.current) {
-      isUsed.current = true;
-
-      setLoading(true);
-
-      axios
-        .get(`${BASE_URL}/${url}`)
-        .then((response) => {
-          if (response.status === 200) {
-            if (response.data.length !== 0) {
-              setItems(response.data);
-            }
-          }
-
-          if (response.status === 404) {
-            throw new Error(response.message || "items - не существует");
-          }
-        })
-        .catch((error) => {
-          setError(error.message);
-        })
-        .then(() => {
-          setLoading(false);
-          isUsed.current = true;
-        });
-    }
-  }, []);
+  const items = useSelector((state) => state.cities);
+  const error = useSelector((state) => state.error);
 
   const handleSubmit = (city) => {
     const newCity = {
@@ -60,19 +33,11 @@ function Section(props) {
       name: city,
     };
 
-    if (items.some((c) => c.name === newCity.name)) {
-      alert("Такой элемент уже существует! Введи новый!");
-    } else {
-      axios.post(`${BASE_URL}/${url}`, newCity).then((response) => {
-        if (response.status === 201) {
-          setItems((prevItems) => [...prevItems, response.data]);
-        }
-      });
-    }
+    dispatch(addCity(newCity));
   };
 
   const handleRemove = (id) => {
-    setItems(items.filter((city) => city.id !== id));
+    // setItems(items.filter((city) => city.id !== id));
 
     axios
       .delete(`${BASE_URL}/${url}/${id}`)
@@ -87,7 +52,7 @@ function Section(props) {
   return (
     <div style={{ marginTop: "40px", marginBottom: "40px" }}>
       <Title title={title} path={path} />
-      {loading && <p>Идет загрузка</p>}
+      {/* {loading && <p>Идет загрузка</p>}*/}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {items.map((city) => {
         return (
